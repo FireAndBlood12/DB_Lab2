@@ -1,0 +1,103 @@
+﻿@model DB_LAB2.Models.Marks.MarksViewModel
+
+@{
+    ViewData["Title"] = "Marks";
+}
+
+<h1>Marks</h1>
+
+<p>
+    <a asp-action="Create">Create New</a>
+</p>
+<table class="table">
+    <thead>
+        <tr>
+            <th>
+                Id
+            </th>
+            <th>
+                Mark
+            </th>
+            <th>
+                Date
+            </th>
+            <th>
+                Subject Id
+            </th>
+            <th>
+                Subject Title
+            </th>
+            <th>
+                Student Id
+            </th>
+            <th>
+                Student FirstName
+            </th>
+            <th>
+                Student LastName
+            </th>
+            <th>
+                Student Group
+            </th>
+            <th>
+                Teacher Id
+            </th>
+            <th>
+                Teacher FirstName
+            </th>
+            <th>
+                Teacher LastName
+            </th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model.Marks)
+        {
+        <tr>
+            <td>
+                @Html.DisplayFor(modelItem => item.Id)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Mark_)
+            </td>
+            <td>
+                @item.Date.ToShortDateString()
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Subject.Id)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Subject.Title)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Student.Id)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Student.FirstName)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Student.LastName)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Student.Group_.Code)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Teacher.Id)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Teacher.FirstName)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Teacher.LastName)
+            </td>
+            <td>
+                <a asp-action="Edit" asp-route-id="@item.Id">Edit</a> |
+                <a asp-action="Details" asp-route-id="@item.Id">Details</a> |
+                <a asp-action="Delete" asp-route-id="@item.Id">Delete</a>
+            </td>
+        </tr>
+        }
+    </tbody>
+</table>
+@{ await Html.RenderPartialAsync("Pagination", Model.PageViewModel);}

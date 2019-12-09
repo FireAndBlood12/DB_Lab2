@@ -9,6 +9,8 @@ using Microsoft.AspNetCore.HttpsPolicy;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.EntityFrameworkCore;
+using DB_LAB2.Models;
 
 namespace DB_LAB2
 {
@@ -33,6 +35,9 @@ namespace DB_LAB2
 
 
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_2);
+
+            services.AddDbContext<DB_LAB2Context>(options =>
+                    options.UseSqlServer(Configuration.GetConnectionString("DB_LAB2Context")));
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

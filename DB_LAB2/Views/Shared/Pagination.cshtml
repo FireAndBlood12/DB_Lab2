@@ -1,0 +1,33 @@
+﻿@model DB_LAB2.Models.Shared.PageViewModel
+
+<partial>
+    <div  style="display: flex; flex-direction:row; justify-content:center;">
+
+        <div >
+            @if (Model.HasPreviousPage)
+            {
+                <a asp-action="Index"
+                   asp-route-page="@(Model.PageNumber - 1)"
+                   class="btn btn-info">
+                    <i class="glyphicon glyphicon-chevron-left"></i>
+                    Prev
+                </a>
+            }
+        </div>
+        <div class="col-lg-2 text-center" style="font-size: 22px">
+            @Model.PageNumber / @Model.TotalPages
+        </div>
+        <div>
+            @if (Model.HasNextPage)
+            {
+                <a asp-action="Index"
+                   asp-route-page="@(Model.PageNumber + 1)"
+                   class="btn btn-info">
+                    Next
+                    <i class="glyphicon glyphicon-chevron-right"></i>
+                </a>
+            }
+        </div>
+
+    </div>
+</partial>

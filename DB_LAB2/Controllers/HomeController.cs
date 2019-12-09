@@ -5,14 +5,35 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using DB_LAB2.Models;
+using Npgsql;
+using DB_LAB2.Models.Home;
+using DB_LAB2.Database;
 
 namespace DB_LAB2.Controllers
 {
     public class HomeController : Controller
     {
-        public IActionResult Index()
+        private FullTextSearch textSearch;
+
+        public HomeController()
         {
-            return View();
+            textSearch = new FullTextSearch(DBConnection.getInstance());
+        }
+        public IActionResult Index(IndexViewModel viewModel)
+        {
+            if(viewModel == null) return View(new IndexViewModel());
+
+            if (viewModel.FullPhraseSearch != null && viewModel.FullPhraseSearch.Length > 0)
+            {
+                return View(new IndexViewModel("", viewModel.FullPhraseSearch, "Full Text Search",
+                                                textSearch.getFullPhrase("title", "subjects", viewModel.FullPhraseSearch)));
+            }
+            if (viewModel.IncludedWordSearch != null && viewModel.IncludedWordSearch.Length > 0)
+            {
+                return View(new IndexViewModel( viewModel.IncludedWordSearch, "", "Included Word Search",
+                                                textSearch.getAllWithIncludedWord("title", "subjects", viewModel.IncludedWordSearch)));
+            }
+            return View(new IndexViewModel());
         }
 
         public IActionResult Privacy()

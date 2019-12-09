@@ -1,8 +1,75 @@
-﻿@{
+﻿@model DB_LAB2.Models.Home.IndexViewModel
+
+
+@{
     ViewData["Title"] = "Home Page";
 }
 
 <div class="text-center">
     <h1 class="display-4">Welcome</h1>
-    <p>Learn about <a href="https://docs.microsoft.com/aspnet/core">building Web apps with ASP.NET Core</a>.</p>
+    <div>
+        <h3 class="display-4">Fulltext search for subjects by title</h3>
+        <form asp-action="Index">
+            <div class="form-group">
+                <label asp-for="FullPhraseSearch" class="control-label"></label>
+                <input asp-for="FullPhraseSearch" class="form-control" />
+            </div>
+            <div class="form-group">
+                <input type="submit" value="Full Phrase Search" class="btn btn-primary" />
+            </div>
+        </form>
+        <form asp-action="Index">
+            <div class="form-group">
+                <label asp-for="IncludedWordSearch" class="control-label"></label>
+                <input asp-for="IncludedWordSearch" class="form-control" />
+            </div>
+            <div class="form-group">
+                <input type="submit" value="Included Word Search" class="btn btn-primary" />
+            </div>
+        </form>
+    </div>
 </div>
+@if (Model.SearchType != null && Model.SearchType.Length > 0)
+{
+    <h4 class="display-4">@Model.SearchType</h4>
+
+}
+@if (Model.Results != null && Model.Results.Count > 0)
+{
+    <table class="table">
+        <thead>
+            <tr>
+                <th>
+                    Id
+                </th>
+                <th>
+                    Attribute
+                </th>
+                <th>
+                    ts_headline
+                </th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var item in Model.Results)
+            {
+                <tr>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.Id)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.Attr)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.Ts_headline)
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}
+else
+{
+    <h1 class="display-4">No results</h1>
+
+}
