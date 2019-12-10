@@ -26,21 +26,27 @@ namespace DB_LAB2.Database
             dbconnection.Close();
             return count;
         }
-        public override void Create(Subject entity)
+        public override long Create(Subject entity)
         {
             NpgsqlConnection connection = dbconnection.Open();
             NpgsqlCommand command = connection.CreateCommand();
-            command.CommandText = "INSERT INTO public.subjects (title) VALUES (:title)";
+            command.CommandText = "INSERT INTO public.subjects (title) VALUES (:title) RETURNING id";
             command.Parameters.Add(new NpgsqlParameter("title", entity.Title));
+            long id = 0;
             try
             {
                 NpgsqlDataReader reader = command.ExecuteReader();
+                while (reader.Read())
+                {
+                    id = Convert.ToInt64(reader.GetValue(0));
+                }
+                dbconnection.Close();
+                return id;
             }
             catch (PostgresException)
             {
-                throw new Exception("Unable to create new Subject");
+                throw;
             }
-            dbconnection.Close();
         }
 
         public override void Delete(long id)

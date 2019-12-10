@@ -28,22 +28,28 @@ namespace DB_LAB2.Database
             return count;
         }
 
-        public override void Create(Group entity)
+        public override long Create(Group entity)
         {
             NpgsqlConnection connection = dbconnection.Open();
             NpgsqlCommand command = connection.CreateCommand();
-            command.CommandText = "INSERT INTO public.groups (code, entrance_year) VALUES (:code, :entrance_year)";
+            command.CommandText = "INSERT INTO public.groups (code, entrance_year) VALUES (:code, :entrance_year) RETURNING  id";
             command.Parameters.Add(new NpgsqlParameter("code", entity.Code));
             command.Parameters.Add(new NpgsqlParameter("entrance_year", entity.EntranceYear));
+            long id = 0;
             try
             {
                 NpgsqlDataReader reader = command.ExecuteReader();
+                while (reader.Read())
+                {
+                    id =  Convert.ToInt64(reader.GetValue(0));
+                }
+                dbconnection.Close();
+                return id;
             }
             catch (PostgresException)
             {
                 throw new Exception("Unable to create new Group");
             }
-            dbconnection.Close();
         }
 
         public override void Delete(long id)

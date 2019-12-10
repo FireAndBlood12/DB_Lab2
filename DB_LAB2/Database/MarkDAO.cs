@@ -77,7 +77,7 @@ namespace DB_LAB2.Database
             dbconnection.Close();
             return st != null;
         }
-        public override void Create(Mark entity)
+        public override long Create(Mark entity)
         {
             if (!checkSubjectId(entity.SubjectId)) throw new Exception("There is no subject with this ID");
             if (!checkTeacherId(entity.TeacherId)) throw new Exception("There is no teacher with this ID");
@@ -85,21 +85,27 @@ namespace DB_LAB2.Database
             NpgsqlConnection connection = dbconnection.Open();
             NpgsqlCommand command = connection.CreateCommand();
             command.CommandText = "INSERT INTO public.marks (mark, date, subject_id, student_id, teacher_id)" +
-                " VALUES (:mark, :date, :subject_id, :student_id, :teacher_id)";
+                " VALUES (:mark, :date, :subject_id, :student_id, :teacher_id) RETURNING  id";
             command.Parameters.Add(new NpgsqlParameter("mark", entity.Mark_));
             command.Parameters.Add(new NpgsqlParameter("date", entity.Date));
             command.Parameters.Add(new NpgsqlParameter("subject_id", entity.SubjectId));
             command.Parameters.Add(new NpgsqlParameter("student_id", entity.StudentId));
             command.Parameters.Add(new NpgsqlParameter("teacher_id", entity.TeacherId));
+            long id = 0;
             try
             {
                 NpgsqlDataReader reader = command.ExecuteReader();
+                while (reader.Read())
+                {
+                    id = Convert.ToInt64(reader.GetValue(0));
+                }
+                dbconnection.Close();
+                return id;
             }
             catch (PostgresException)
             {
-                throw ;
+                throw new Exception("Unable to create new Mark");
             }
-            dbconnection.Close();
         }
 
         public override void Delete(long id)

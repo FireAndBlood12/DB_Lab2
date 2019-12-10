@@ -42,26 +42,32 @@ namespace DB_LAB2.Database
             dbconnection.Close();
             return s != null;
         }
-        public override void Create(Teacher entity)
+        public override long Create(Teacher entity)
         {
             if (!checkMainSubjectId(entity.MainSubjectId)) throw new Exception("There is no subject with this ID");
             NpgsqlConnection connection = dbconnection.Open();
             NpgsqlCommand command = connection.CreateCommand();
             command.CommandText = "INSERT INTO public.teachers (firstname, lastname, experience, main_subject_id)" +
-                " VALUES (:firstname, :lastname, :experience, :main_subject_id)";
+                " VALUES (:firstname, :lastname, :experience, :main_subject_id) RETURNING id";
             command.Parameters.Add(new NpgsqlParameter("firstname", entity.FirstName));
             command.Parameters.Add(new NpgsqlParameter("lastname", entity.LastName));
             command.Parameters.Add(new NpgsqlParameter("experience", entity.Experience));
             command.Parameters.Add(new NpgsqlParameter("main_subject_id", entity.MainSubjectId));
+            long id = 0;
             try
             {
                 NpgsqlDataReader reader = command.ExecuteReader();
+                while (reader.Read())
+                {
+                    id = Convert.ToInt64(reader.GetValue(0));
+                }
+                dbconnection.Close();
+                return id;
             }
             catch (PostgresException)
             {
-                throw new Exception("Unable to create new Student");
+                throw new Exception("Unable to create new Teacher");
             }
-            dbconnection.Close();
         }
 
         public override void Delete(long id)

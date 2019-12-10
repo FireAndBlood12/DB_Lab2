@@ -44,25 +44,31 @@ namespace DB_LAB2.Database
             dbconnection.Close();
             return g != null;
         }
-        public override void Create(Student entity)
+        public override long Create(Student entity)
         {
             if (!checkGroupId(entity.GroupId)) throw new Exception("There is no group with this ID");
             NpgsqlConnection connection = dbconnection.Open();
             NpgsqlCommand command = connection.CreateCommand();
-            command.CommandText = "INSERT INTO public.students (firstname, lastname, birthday, group_id) VALUES (:firstname, :lastname, :birthday, :group_id)";
+            command.CommandText = "INSERT INTO public.students (firstname, lastname, birthday, group_id) VALUES (:firstname, :lastname, :birthday, :group_id)  RETURNING  id";
             command.Parameters.Add(new NpgsqlParameter("firstname", entity.FirstName));
             command.Parameters.Add(new NpgsqlParameter("lastname", entity.LastName));
             command.Parameters.Add(new NpgsqlParameter("birthday", entity.Birthday));
             command.Parameters.Add(new NpgsqlParameter("group_id", entity.GroupId));
+            long id = 0;
             try
             {
                 NpgsqlDataReader reader = command.ExecuteReader();
+                while (reader.Read())
+                {
+                    id = Convert.ToInt64(reader.GetValue(0));
+                }
+                dbconnection.Close();
+                return id;
             }
             catch (PostgresException)
             {
                 throw new Exception("Unable to create new Student");
             }
-            dbconnection.Close();
         }
 
         public override void Delete(long id)

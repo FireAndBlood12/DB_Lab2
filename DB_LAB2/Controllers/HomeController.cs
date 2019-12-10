@@ -36,9 +36,11 @@ namespace DB_LAB2.Controllers
             return View(new IndexViewModel());
         }
 
-        public IActionResult Privacy()
+        public IActionResult RandomPackage( RandomPackageViewModel viewModel)
         {
-            return View();
+            if (viewModel == null || viewModel.Count < 1) return View(new RandomPackageViewModel());
+            new RandomPackage().GenerateEntenties(viewModel.Count);
+            return RedirectToAction(nameof(Index));
         }
 
         [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]

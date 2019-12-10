@@ -14,7 +14,7 @@ namespace DB_LAB2.Database
             dbconnection = db;
         }
 
-        public abstract void Create(T entity);
+        public abstract long Create(T entity);
         public abstract T GetById(long id);
         public abstract List<T> GetList(int page);
         public abstract void Update(T entity);
